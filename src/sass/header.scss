@@ -1,0 +1,37 @@
+.header {
+  @media screen and (-webkit-min-device-pixel-ratio: 1),
+    (min-resolution: 96dpi) {
+    background-repeat: no-repeat;
+    background-size: cover;
+    @media screen and (max-width: 767px) {
+      background-image: url(../images/header/abstract_320px1.jpg);
+      height: 230px;
+    }
+    @media screen and (min-width: 768px) and (max-width: 1279px) {
+      background-image: url(../images/header/abstract_768px1.jpg);
+      height: 216px;
+    }
+    @media screen and (min-width: 1280px) {
+      background-image: url(../images/header/abstract_1280px1.jpg);
+      height: 216px;
+    }
+  }
+
+  @media screen and (-webkit-min-device-pixel-ratio: 2),
+    (min-resolution: 182dpi) {
+    background-repeat: no-repeat;
+    background-size: cover;
+    @media screen and (max-width: 767px) {
+      background-image: url(../images/header/abstract_320px2.jpg);
+      height: 230px;
+    }
+    @media screen and (min-width: 768px) and (max-width: 1279px) {
+      background-image: url(../images/header/abstract_768px2.jpg);
+      height: 216px;
+    }
+    @media screen and (min-width: 1280px) {
+      background-image: url(../images/header/abstract_1280px2.jpg);
+      height: 216px;
+    }
+  }
+}
