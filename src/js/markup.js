@@ -17,7 +17,7 @@ import {
 } from './refs';
 
 export const movieService = new MovieApiService();
-
+export let currentPage;
 const API_KEY = 'c491b5b8e2b4a9ab13619b0a91f8bb41';
 const BASE_URL = 'https://api.themoviedb.org/3/';
 const language = 'en-US';
@@ -27,6 +27,7 @@ export let request = `${BASE_URL}trending/movie/day?api_key=${API_KEY}&page=${mo
 export let firstPage = false;
 export let totalPages = 0;
 export let totalResults = 0;
+export let downloadData = [];
 let strGenres;
 function createMarkup(response) {
   let markup = '';
@@ -36,6 +37,7 @@ function createMarkup(response) {
     if (element !== undefined) {
       strGenres = movieService.findGenresById(element);
     }
+    downloadData.push(element);
     markup += `<li class="movie__card">
 
     <a href="https://www.themoviedb.org/t/p/original/${
@@ -57,7 +59,7 @@ function createMarkup(response) {
     </div>
     </li>`;
   });
-
+  console.log(downloadData);
   return markup;
 }
 
@@ -75,7 +77,7 @@ export function createModalMarkup(element) {
   originalTitle.textContent = `${element.original_title}`;
   genres.textContent = `${strGenres}`;
   overview.textContent = `${element.overview}`;
-
+  
   //addToFirebase(element);
   addToLocalStorage(element);
 }
