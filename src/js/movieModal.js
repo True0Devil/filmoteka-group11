@@ -1,6 +1,7 @@
 import { modalMovie, galleryEl, closeBtn } from './refs';
 import MovieApiService from './movies-service';
 import { createModalMarkup } from './markup';
+import { pagination } from './pagination';
 const movieService = new MovieApiService();
 
 const API_KEY = 'c491b5b8e2b4a9ab13619b0a91f8bb41';
@@ -15,9 +16,12 @@ galleryEl.addEventListener('click', showModalMovie);
 
 function modyfyRequest(evt) {
   const findString = document.querySelector('.header__form-input');
+  console.log(pagination);
   if (findString.value !== '') {
     movieService.query = evt.target.alt.replace('#', '');
     request = `${BASE_URL}search/movie?api_key=${API_KEY}&language=${language}&page=${movieService.page}&include_adult=${include_adult}&query=${movieService.query}`;
+  } else {
+    request = `${BASE_URL}trending/movie/day?api_key=${API_KEY}&page=${pagination._currentPage}`;
   }
   return request;
 }
