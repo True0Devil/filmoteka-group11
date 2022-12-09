@@ -16,7 +16,7 @@ import {
     overview,
 
 } from './refs';
-import { pagination } from './pagination';
+
 
 export const movieService = new MovieApiService();
 
