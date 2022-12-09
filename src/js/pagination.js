@@ -43,20 +43,21 @@ const options = makePaginationOptions();
 
 export let pagination = new Pagination(paginationContainer, options);
 export let paginationTop = new Pagination(paginationContainerTop, options);
+export let currentPage =1;
 let chanePage = true;
 
 pagination.on('beforeMove', function(eventData) {
 
-    console.log(firstPage);
-    movieService.page = eventData.page; 
-    createRequest();
+  currentPage = eventData.page;
+  movieService.page = eventData.page; 
+  createRequest();
 });
 
 paginationTop.on('beforeMove', function(eventData) {
-
-    console.log(firstPage);
-    movieService.page = eventData.page; 
-    createRequest();
+    
+  currentPage = eventData.page;
+  movieService.page = eventData.page; 
+  createRequest();
 });
 
 pagination.on('afterMove', function(eventData) {
