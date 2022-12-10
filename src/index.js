@@ -6,4 +6,7 @@ import { pagination } from './js/pagination.js';
 import './js/spinner';
 import { firebase } from './js/firebase.js';
 import './js/colorTheme';
-// import './js/addFilmLibrary';
+import './js/addFilmLibrary';
+import './js/trailers';
+import '../node_modules/basiclightbox/dist/basicLightbox.min.css';
+
