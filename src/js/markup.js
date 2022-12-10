@@ -1,12 +1,14 @@
 import MovieApiService from './movies-service';
 import addToLocalStorage from './localStorage-logic';
-import addToFirebase from './firebase';
+
 import * as basicLightbox from 'basiclightbox'
 import trailer from './trailers.js';
+
+//import addToFirebase from './firebase';
+import { changeFirstPage } from './pagination';
+
 import {
   formEl,
-  movieSection,
-  modalMovie,
   warningField,
   galleryEl,
   poster,
@@ -17,21 +19,27 @@ import {
   originalTitle,
   genres,
   overview,
-  btnAddWatched,
-  btnAddQueue,
-  closeBtn,
 } from './refs';
 
-const movieService = new MovieApiService();
-
+export const movieService = new MovieApiService();
+export let currentPage;
 const API_KEY = 'c491b5b8e2b4a9ab13619b0a91f8bb41';
 const BASE_URL = 'https://api.themoviedb.org/3/';
 const language = 'en-US';
 const include_adult = false;
 
+export let request = `${BASE_URL}trending/movie/day?api_key=${API_KEY}&page=${movieService.page}`;
+export let firstPage = false;
+export let totalPages = 0;
+export let totalResults = 0;
+export let downloadData = [];
+let strGenres;
 function createMarkup(response) {
   let markup = '';
+  totalPages = response.data.total_pages;
+  totalResults = response.data.total_results;
   response.data.results.map(element => {
+
     let strGenres = movieService.findGenresById(element);
     markup += `<li class="movie__card">
     <div class="btn-id">
@@ -44,11 +52,17 @@ function createMarkup(response) {
       </button>
 
    </div>
+
     <a href="https://www.themoviedb.org/t/p/original/${
-      element.backdrop_path
+      element.backdrop_path == null
+        ? element.poster_path
+        : element.backdrop_path
     }"><img class="movie__poster" src="https://www.themoviedb.org/t/p/original/${
       element.poster_path
-    }" alt="${element.original_title}" loading="lazy" id="${element.id}"></a>
+    }" alt="${element.original_title}" loading="lazy" id="${
+      element.id
+    }" loading="lazy"></a>
+
     <div class="movie__info">
     <h2 class="movie__name">${element.title}</h2>
     <p class="movie__info">${strGenres}<span class="movie__year">${element.release_date.slice(
@@ -58,7 +72,9 @@ function createMarkup(response) {
     </div>
     </li>`;
   });
-  
+
+  console.log(downloadData);
+
   return markup;
 }
 
@@ -77,9 +93,9 @@ export function createModalMarkup(element) {
   genres.textContent = `${strGenres}`;
   overview.textContent = `${element.overview}`;
 
-  
 
-  addToFirebase(element);
+  
+  //addToFirebase(element);
   addToLocalStorage(element);
 }
 
@@ -102,21 +118,32 @@ async function getMovies(request) {
   }
 }
 
-function onFormSubmit(event) {
-  event.preventDefault();
-  movieService.query = formEl.elements.searchmovies.value;
-
-  let request = `${BASE_URL}search/movie?api_key=${API_KEY}&language=${language}&page=${movieService.page}&include_adult=${include_adult}&query=${movieService.query}`;
-  getMovies(request);
+export function createRequest() {
+  let query = formEl.elements.searchmovies.value;
+  // console.log(movieService);
+  if (query !== '' && query !== undefined) {
+    request = `${BASE_URL}search/movie?api_key=${API_KEY}&language=${language}&page=${movieService.page}&include_adult=${include_adult}&query=${query}`;
+    getMovies(request);
+  } else {
+    firstPage = false;
+    request = `${BASE_URL}trending/movie/day?api_key=${API_KEY}&page=${movieService.page}`;
+    getMovies(request);
+  }
 }
 
-let request = `${BASE_URL}trending/movie/day?api_key=${API_KEY}`;
+function onFormSubmit(event, request) {
+  event.preventDefault();
+  changeFirstPage();
+  movieService.page = 1;
+  createRequest(event.page);
+}
 
 if (formEl) {
   formEl.addEventListener('submit', onFormSubmit);
 
   movieService.getGenre();
 
-  getMovies(request);
- 
+
+  createRequest();
+
 }

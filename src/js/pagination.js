@@ -1,57 +1,93 @@
 import Pagination from 'tui-pagination';
-// import 'tui-pagination/dist/tui-pagination.css';
-// const listRef = document.querySelector('.movie-list');
-const paginationSection = document.querySelector('.pagination.section');
-const paginationContainer = document.getElementById(
-    'tui-pagination-container'
-  );
 
-  export function makePaginationOptions(totalResults = 10000) {
-    return {
-      totalItems: totalResults, //total_results < 10000 ? total_results : 10000,
-      itemsPerPage: 20,
-      visiblePages: 5,
-      page: 1,
-      centerAlign: true,
-      firstItemClassName: 'tui-first-child',
-      lastItemClassName: 'tui-last-child',
-      template: {
-        page: '<a href="#" class="tui-page-btn">{{page}}</a>',
-        currentPage:
-          '<strong class="tui-page-btn tui-is-selected">{{page}}</strong>',
-        moveButton:
-          '<a href="#" class="tui-page-btn tui-{{type}}">' +
-          '<span class="tui-ico-{{type}}">{{type}}</span>' +
-          '</a>',
-        disabledMoveButton:
-          '<span class="tui-page-btn tui-is-disabled tui-{{type}}">' +
-          '<span class="tui-ico-{{type}}">{{type}}</span>' +
-          '</span>',
-        moreButton:
-          '<a href="#" class="tui-page-btn tui-{{type}}-is-ellip">' +
-          '<span class="tui-ico-ellip">...</span>' +
-          '</a>',
-      },
-    };
-  }
-  
-  const options = makePaginationOptions();
+import { createRequest, movieService, createRequest, totalResults, firstPage} from './markup';
 
-  export const pagination = new Pagination(paginationContainer, options);
+const paginationContainers = document.querySelectorAll(
+    '.tui-pagination'
+);
+const paginationContainerTop = paginationContainers[0];
+const paginationContainer = paginationContainers[1];
+
+
+
+export function makePaginationOptions(totalResults = 1000) {
+  return {
+    totalItems: totalResults,
+    itemsPerPage: 20,
+    visiblePages: 5,
+    page: 1,
+    centerAlign: true,
+    firstItemClassName: 'tui-first-child',
+    lastItemClassName: 'tui-last-child',
+    template: {
+      page: '<a href="#" class="tui-page-btn">{{page}}</a>',
+      currentPage:
+        '<strong class="tui-page-btn tui-is-selected">{{page}}</strong>',
+      moveButton:
+        '<a href="#" class="tui-page-btn tui-{{type}}">' +
+        '<span class="tui-ico-{{type}}">{{type}}</span>' +
+        '</a>',
+      disabledMoveButton:
+        '<span class="tui-page-btn tui-is-disabled tui-{{type}}">' +
+        '<span class="tui-ico-{{type}}">{{type}}</span>' +
+        '</span>',
+      moreButton:
+        '<a href="#" class="tui-page-btn tui-{{type}}-is-ellip">' +
+        '<span class="tui-ico-ellip">...</span>' +
+        '</a>',
+    },
+  };
+}
+
+const options = makePaginationOptions();
+
+export let pagination = new Pagination(paginationContainer, options);
+export let paginationTop = new Pagination(paginationContainerTop, options);
+export let currentPage =1;
+let chanePage = true;
+
+pagination.on('beforeMove', function(eventData) {
+
+  currentPage = eventData.page;
+  movieService.page = eventData.page; 
+  createRequest();
+});
+
+paginationTop.on('beforeMove', function(eventData) {
+    
+  currentPage = eventData.page;
+  movieService.page = eventData.page; 
+  createRequest();
+});
+
+pagination.on('afterMove', function(eventData) {
+    if (chanePage === true) {
+        pagination._options.totalItems = totalResults;
+        paginationTop.reset(eventData.page);
+        paginationTop._options.totalItems = totalResults;
+        chanePage = false;
+        paginationTop.movePageTo(eventData.page);
+        
+    }
+    chanePage = true;
+});
+
+paginationTop.on('afterMove', function(eventData) {
+    if (chanePage === true) {
+        paginationTop._options.totalItems = totalResults;
+        pagination.reset(eventData.page);
+        pagination._options.totalItems = totalResults;
+        chanePage = false;
+        pagination.movePageTo(eventData.page);
+        
+    }
+    chanePage = true;
+});
+
+export function changeFirstPage() {
   
-  // pagination.on('afterMove', updateMoviesList);
-  
-  // export async function updateMoviesList(event) {
-  //   const currentPage = event.page;
-  
-  //   await moviesListMarkupFirstRender(currentPage);
-  //   document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
-  // }
-  
-  // export function addHiddenPagination() {
-  //   paginationContainer.classList.add('visually-hidden');
-  // }
-  
-  // export function removeHiddenPagination() {
-  //   paginationContainer.classList.remove('visually-hidden');
-  // }
+    pagination.reset();
+    paginationTop.reset();
+    console.log(pagination);
+
+}
