@@ -1,6 +1,8 @@
 import MovieApiService from './movies-service';
 import addToLocalStorage from './localStorage-logic';
 import addToFirebase from './firebase';
+import * as basicLightbox from 'basiclightbox'
+import trailer from './trailers.js';
 import {
   formEl,
   movieSection,
@@ -31,8 +33,17 @@ function createMarkup(response) {
   let markup = '';
   response.data.results.map(element => {
     let strGenres = movieService.findGenresById(element);
-
     markup += `<li class="movie__card">
+    <div class="btn-id">
+      <button data-id="${element.id}" class="btn-youtube">
+    
+
+         <div class="overlay-btn-youtube-text" data-id="${element.id}">
+            <h2 class="btn-youtube-text" data-id="${element.id}">Movie Trailer</h2>
+         </div>
+      </button>
+
+   </div>
     <a href="https://www.themoviedb.org/t/p/original/${
       element.backdrop_path
     }"><img class="movie__poster" src="https://www.themoviedb.org/t/p/original/${
@@ -47,6 +58,7 @@ function createMarkup(response) {
     </div>
     </li>`;
   });
+  
   return markup;
 }
 
@@ -65,6 +77,8 @@ export function createModalMarkup(element) {
   genres.textContent = `${strGenres}`;
   overview.textContent = `${element.overview}`;
 
+  
+
   addToFirebase(element);
   addToLocalStorage(element);
 }
@@ -78,6 +92,7 @@ async function getMovies(request) {
       setTimeout(() => (warningField.textContent = ''), 3000);
     } else {
       galleryEl.innerHTML = createMarkup(response);
+      trailer.createTrailerLink(document.querySelectorAll('.btn-youtube'));
     }
   } catch (error) {
     warningField.textContent = 'Please write something in the box :)';
@@ -103,4 +118,5 @@ if (formEl) {
   movieService.getGenre();
 
   getMovies(request);
+ 
 }
