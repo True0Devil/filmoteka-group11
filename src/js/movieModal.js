@@ -48,9 +48,9 @@ async function showModalMovie(evt) {
     );*/
  
 
-  //if (requiredMovie !== undefined) {
+  if (requiredMovie !== undefined) {
   createModalMarkup(requiredMovie);
-  // }
+   }
 
   document.body.classList.toggle('is-open');
   modalMovie.classList.toggle('is-hidden');
