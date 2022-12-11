@@ -41,6 +41,7 @@ function createMarkup(response) {
   response.data.results.map(element => {
 
     let strGenres = movieService.findGenresById(element);
+    downloadData.push(element);
     markup += `<li class="movie__card">
     <div class="btn-id">
       <button data-id="${element.id}" class="btn-youtube">
